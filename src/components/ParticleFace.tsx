@@ -66,7 +66,6 @@ class Particle {
       }
     }
 
-    // Spring back to target
     const springX = (this.targetX - this.x) * this.ease;
     const springY = (this.targetY - this.y) * this.ease;
 
@@ -76,7 +75,10 @@ class Particle {
     this.x += this.vx;
     this.y += this.vy;
 
-    const distToTarget = Math.hypot(this.x - this.targetX, this.y - this.targetY);
+    const distToTarget = Math.hypot(
+      this.x - this.targetX,
+      this.y - this.targetY
+    );
     if (distToTarget < 1) this.assembled = true;
   }
 
@@ -98,7 +100,7 @@ interface ParticleFaceProps {
 
 export default function ParticleFace({
   imageSrc = "/me.png",
-  size = 450,
+  size = 320,
 }: ParticleFaceProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
@@ -106,62 +108,75 @@ export default function ParticleFace({
   const hoveredRef = useRef(false);
   const animRef = useRef<number>(0);
   const frameRef = useRef(0);
-  const MOUSE_RADIUS = 80;
+  const MOUSE_RADIUS = 70;
 
   const buildParticles = useCallback(
     (W: number, H: number, imgEl?: HTMLImageElement) => {
       const particles: Particle[] = [];
-      const sampleSize = Math.min(W, H) - 20;
+      const sampleSize = Math.min(W, H) - 10;
       const offsetX = (W - sampleSize) / 2;
       const offsetY = (H - sampleSize) / 2;
 
       if (imgEl) {
-        // ── Sample real image ──
         const off = document.createElement("canvas");
         off.width = sampleSize;
         off.height = sampleSize;
         const offCtx = off.getContext("2d")!;
 
-        // Circular mask
         offCtx.beginPath();
-        offCtx.arc(sampleSize / 2, sampleSize / 2, sampleSize / 2, 0, Math.PI * 2);
+        offCtx.arc(
+          sampleSize / 2,
+          sampleSize / 2,
+          sampleSize / 2,
+          0,
+          Math.PI * 2
+        );
         offCtx.clip();
         offCtx.drawImage(imgEl, 0, 0, sampleSize, sampleSize);
 
         const data = offCtx.getImageData(0, 0, sampleSize, sampleSize).data;
-        const gap = 3; // Denser particles for clearer face
+        const gap = 3;
 
         for (let y = 0; y < sampleSize; y += gap) {
           for (let x = 0; x < sampleSize; x += gap) {
             const i = (y * sampleSize + x) * 4;
             const a = data[i + 3];
-            if (a < 80) continue; // Lower threshold to capture more edge detail
+            if (a < 80) continue;
 
             const r = data[i];
             const g = data[i + 1];
             const b = data[i + 2];
             const brightness = (r + g + b) / 3;
-            if (brightness < 10) continue; // Lower threshold for more detail
+            if (brightness < 10) continue;
 
             const tx = x + offsetX;
             const ty = y + offsetY;
 
-            // Scatter origin – fly in from edges
             const edge = Math.random();
             let sx: number, sy: number;
-            if (edge < 0.25) { sx = Math.random() * W; sy = -20; }
-            else if (edge < 0.5) { sx = W + 20; sy = Math.random() * H; }
-            else if (edge < 0.75) { sx = Math.random() * W; sy = H + 20; }
-            else { sx = -20; sy = Math.random() * H; }
+            if (edge < 0.25) {
+              sx = Math.random() * W;
+              sy = -20;
+            } else if (edge < 0.5) {
+              sx = W + 20;
+              sy = Math.random() * H;
+            } else if (edge < 0.75) {
+              sx = Math.random() * W;
+              sy = H + 20;
+            } else {
+              sx = -20;
+              sy = Math.random() * H;
+            }
 
             const dist = Math.hypot(tx - W / 2, ty - H / 2);
-            const delay = Math.floor((dist / (sampleSize / 2)) * 50 + Math.random() * 25);
+            const delay = Math.floor(
+              (dist / (sampleSize / 2)) * 50 + Math.random() * 25
+            );
 
             particles.push(new Particle(sx, sy, tx, ty, r, g, b, delay));
           }
         }
       } else {
-        // ── Fallback: warm-toned orb ──
         const cx = W / 2;
         const cy = H / 2;
         const R = sampleSize / 2;
@@ -171,7 +186,6 @@ export default function ParticleFace({
             const dist = Math.sqrt(x * x + y * y);
             if (dist > R) continue;
 
-            // Gruvbox-warm colors
             const t = dist / R;
             const r = Math.round(169 + (212 - 169) * t);
             const g = Math.round(182 + (190 - 182) * t);
@@ -179,7 +193,9 @@ export default function ParticleFace({
 
             const tx = cx + x;
             const ty = cy + y;
-            const delay = Math.floor((dist / R) * 50 + Math.random() * 20);
+            const delay = Math.floor(
+              (dist / R) * 50 + Math.random() * 20
+            );
 
             const sx = Math.random() * W;
             const sy = Math.random() * H;
@@ -201,14 +217,12 @@ export default function ParticleFace({
     canvas.width = size;
     canvas.height = size;
 
-    // Try loading face image
     const img = new Image();
     img.crossOrigin = "anonymous";
     img.src = imageSrc;
     img.onload = () => buildParticles(size, size, img);
     img.onerror = () => buildParticles(size, size, undefined);
 
-    // Animation loop
     const tick = () => {
       frameRef.current++;
       const f = frameRef.current;
@@ -227,7 +241,6 @@ export default function ParticleFace({
     };
     animRef.current = requestAnimationFrame(tick);
 
-    // Mouse handlers
     const onMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       const scaleX = size / rect.width;
@@ -237,19 +250,18 @@ export default function ParticleFace({
         y: (e.clientY - rect.top) * scaleY,
       };
     };
-    const onEnter = () => { hoveredRef.current = true; };
+    const onEnter = () => {
+      hoveredRef.current = true;
+    };
     const onLeave = () => {
       hoveredRef.current = false;
       mouseRef.current = { x: -9999, y: -9999 };
     };
 
-    // Click → scatter & reassemble
     // const onClick = () => {
-    //   const W = size;
-    //   const H = size;
     //   for (const p of particlesRef.current) {
-    //     p.x = Math.random() * W;
-    //     p.y = Math.random() * H;
+    //     p.x = Math.random() * size;
+    //     p.y = Math.random() * size;
     //     p.vx = (Math.random() - 0.5) * 15;
     //     p.vy = (Math.random() - 0.5) * 15;
     //     p.assembled = false;
@@ -272,7 +284,10 @@ export default function ParticleFace({
   }, [imageSrc, size, buildParticles]);
 
   return (
-    <div className="relative select-none" style={{ width: size, height: size }}>
+    <div
+      className="relative select-none"
+      style={{ width: size, height: size }}
+    >
       <canvas
         ref={canvasRef}
         className="cursor-crosshair"

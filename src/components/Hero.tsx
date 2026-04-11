@@ -2,82 +2,115 @@
 
 import ParticleFace from "./ParticleFace";
 
-const TECH_STACK = [
-  "react", "next.js", "typescript", "javascript", "node.js",
-  "python", "tailwind", "docker", "git", "postgresql",
-  "redis", "aws", "linux", "figma",
+// ─── Editable Tech Stack ─────────────────────────────────────────────────
+// Add or remove technologies here. Set `highlight: true` for accent color.
+const TECH_STACK: { name: string; highlight?: boolean }[] = [
+  { name: "react" },
+  { name: "next.js" },
+  { name: "typescript" },
+  { name: "javascript" },
+  { name: "node.js" },
+  { name: "express" },
+  { name: "python" },
+  { name: "tailwind" },
+  { name: "docker" },
+  { name: "git", highlight: true },
+  { name: "postgresql" },
+  { name: "mongodb" },
+  { name: "redis", highlight: true },
+  { name: "aws" },
+  { name: "linux" },
+  { name: "figma" },
 ];
-
-const HIGHLIGHT_TECH = ["redis", "aws"];
 
 export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center justify-center pt-20 pb-16"
+      className="relative flex items-start pt-24 lg:pt-28 pb-10 z-10"
     >
       <div className="max-w-5xl mx-auto px-6 w-full">
-        <div className="flex flex-col lg:flex-row items-center lg:items-start gap-12 lg:gap-16">
-          {/* ── Left: Particle Face ── */}
-          <div className="flex-shrink-0">
-            <ParticleFace imageSrc="/me.png" size={450} />
+        <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-14">
+          <div className="flex flex-col justify-center items-center">
+            
+            {/* ── Left: Particle Face ── */}
+            <div className="flex-shrink-0 self-start">
+              <ParticleFace imageSrc="/me.png" size={320} />
+            </div>
+
+            {/* Status line */}
+            <div className="flex items-center gap-3 mt-5">
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded text-xs text-white bg-black border border-white">
+                tl;dr
+              </span>
+              <span className="flex items-center border border-white gap-2 px-3 py-1.5 rounded text-xs text-white">
+                <span className="status-dot" />
+                {new Date().toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: false,
+                })}
+              </span>
+            </div>
+
           </div>
 
           {/* ── Right: Bio ── */}
-          <div className="flex flex-col items-center lg:items-start text-center lg:text-left flex-1 pt-4">
-            {/* whoami header */}
-            <p className="text-gruvbox-text-muted text-xs tracking-widest mb-2">
-              ~ whoami
-            </p>
+          <div className="flex flex-col items-start flex-1 pt-2">
+            {/* whoami + open to work row */}
+            <div className="flex items-start justify-between w-full mb-1">
+              <p className="text-gruvbox-text-muted text-sm tracking-widest">
+                ~ whoami
+              </p>
+              <span className="badge-work ml-4 hidden sm:inline-flex">
+                open to work
+              </span>
+            </div>
 
             {/* Name */}
-            <h1 className="font-mono leading-none mb-1">
+            <h1 className="font-mono leading-none mb-4">
               <span className="block text-4xl lg:text-5xl font-bold text-gruvbox-text-primary">
-                shubhashish
+                Shubhashish Chakraborty
               </span>
-              <span className="block text-lg lg:text-xl text-gruvbox-text-secondary font-light mt-1">
+              <span className="block text-base lg:text-lg text-gruvbox-text-secondary font-light mt-1">
                 / developer
               </span>
             </h1>
 
-            {/* Open to work badge */}
-            <div className="mt-4 mb-6">
-              <span className="badge-work">open to work</span>
-            </div>
-
-            {/* Bio description */}
-            <p className="text-gruvbox-text-secondary text-sm leading-relaxed max-w-md mb-2">
+            {/* Bio */}
+            <p className="text-gruvbox-text-secondary text-sm leading-relaxed max-w-lg mb-2">
               i build web apps and tools. currently exploring
-              cloud architecture and open-source.
+              cloud architecture and contributing to open-source.
             </p>
 
             {/* Current project */}
-            <p className="text-gruvbox-text-secondary text-sm mb-6">
+            <p className="text-gruvbox-text-secondary text-sm mb-5">
               <span className="text-gruvbox-text-muted">▸</span>{" "}
               building{" "}
-              <span className="text-gruvbox-text-primary font-semibold">cool stuff</span>
-              {" "}- crafting digital experiences
+              <span className="text-gruvbox-text-primary font-bold">
+                cool stuff
+              </span>{" "}
+              - crafting digital experiences
             </p>
 
             {/* Tech stack tags */}
-            <div className="flex flex-wrap gap-2 mb-6 max-w-lg justify-center lg:justify-start">
+            <div className="flex flex-wrap gap-2 mb-5 max-w-lg">
               {TECH_STACK.map((tech) => (
                 <span
-                  key={tech}
-                  className={`tech-badge ${
-                    HIGHLIGHT_TECH.includes(tech) ? "tech-badge-highlight" : ""
-                  }`}
+                  key={tech.name}
+                  className={`tech-badge ${tech.highlight ? "tech-badge-highlight" : ""
+                    }`}
                 >
-                  {tech}
+                  {tech.name}
                 </span>
               ))}
             </div>
 
             {/* Social icons */}
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-5 mb-5">
               {/* GitHub */}
               <a
-                href="https://github.com/yourusername"
+                href="https://github.com/Shubhashish-Chakraborty"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-icon"
@@ -90,7 +123,7 @@ export default function Hero() {
 
               {/* Twitter/X */}
               <a
-                href="https://twitter.com/yourhandle"
+                href="https://twitter.com/ShubhashishDev"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-icon"
@@ -103,7 +136,7 @@ export default function Hero() {
 
               {/* LinkedIn */}
               <a
-                href="https://linkedin.com/in/yourprofile"
+                href="https://linkedin.com/in/shubhashish-chakraborty"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-icon"
@@ -116,7 +149,7 @@ export default function Hero() {
 
               {/* Email */}
               <a
-                href="mailto:hello@yoursite.dev"
+                href="mailto:shubhashish@dev.com"
                 className="social-icon"
                 aria-label="Email"
               >
@@ -127,38 +160,27 @@ export default function Hero() {
             </div>
 
             {/* CTA buttons */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-5">
               <a
-                href="/resume.pdf"
+                href="/resume"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-bordered"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 resume
               </a>
               <a
-                href="mailto:hello@yoursite.dev"
+                href="mailto:shubhashish@dev.com"
                 className="btn-bordered"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
                 get in touch
               </a>
-            </div>
-
-            {/* Status line */}
-            <div className="flex items-center gap-3 mt-8">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded text-xs text-gruvbox-text-muted bg-gruvbox-surface border border-gruvbox-border">
-                tl;dr
-              </span>
-              <span className="flex items-center gap-2 text-xs text-gruvbox-text-muted">
-                <span className="status-dot" />
-                {new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })}
-              </span>
             </div>
           </div>
         </div>
