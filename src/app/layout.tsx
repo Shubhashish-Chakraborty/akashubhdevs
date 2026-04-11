@@ -19,6 +19,11 @@ export const metadata: Metadata = {
     description: "full-stack developer building web apps and tools.",
     type: "website",
   },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+  },
 };
 
 export default function RootLayout({
