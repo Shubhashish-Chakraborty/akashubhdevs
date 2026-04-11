@@ -1,0 +1,10 @@
+Place your profile photo here as "me.png"
+
+Best results:
+- Square crop (500x500px+)
+- High contrast photo
+- Plain or blurred background
+- Clear face visible
+
+The particle engine will sample your image pixels and
+reconstruct your face from thousands of colored particles.

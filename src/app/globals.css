@@ -1,0 +1,248 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #0d0e0f;
+  --bg-surface: #1a1b1c;
+  --bg-elevated: #222324;
+  --border: #2a2b2c;
+  --border-light: #3a3b3c;
+  --text-primary: #d4be98;
+  --text-secondary: #928374;
+  --text-muted: #665c54;
+  --accent-green: #a9b665;
+  --accent-yellow: #d8a657;
+  --accent-orange: #e78a4e;
+  --accent-aqua: #89b482;
+  --accent-red: #ea6962;
+  --accent-purple: #d3869b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'JetBrains Mono', monospace;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Selection */
+::selection {
+  background: rgba(169, 182, 101, 0.3);
+  color: var(--text-primary);
+}
+
+/* Terminal prompt styling */
+.terminal-prompt {
+  color: var(--text-secondary);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.terminal-prompt::before {
+  content: '$';
+  color: var(--accent-green);
+  font-weight: 700;
+}
+
+/* Tech badge */
+.tech-badge {
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+  padding: 4px 14px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tech-badge:hover {
+  border-color: var(--accent-yellow);
+  color: var(--accent-yellow);
+}
+
+.tech-badge-highlight {
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+}
+
+/* Bordered button */
+.btn-bordered {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border-radius: 4px;
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-bordered:hover {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+
+/* Experience dot */
+.exp-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--accent-aqua);
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+.exp-dot-yellow {
+  background-color: var(--accent-yellow);
+}
+
+.exp-dot-orange {
+  background-color: var(--accent-orange);
+}
+
+.exp-dot-green {
+  background-color: var(--accent-green);
+}
+
+/* Contribution grid placeholder */
+.contrib-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background-color: var(--bg-elevated);
+}
+
+.contrib-cell-1 { background-color: #2e3526; }
+.contrib-cell-2 { background-color: #4a5a30; }
+.contrib-cell-3 { background-color: #6b8a3a; }
+.contrib-cell-4 { background-color: var(--accent-green); }
+
+/* Social icon */
+.social-icon {
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-icon:hover {
+  color: var(--text-primary);
+}
+
+/* Open to work badge */
+.badge-work {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border: 1px solid var(--accent-green);
+  color: var(--accent-green);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: 4px;
+  transform: rotate(12deg);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Project card */
+.project-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-surface);
+  transition: border-color 0.2s ease;
+}
+
+.project-card:hover {
+  border-color: var(--border-light);
+}
+
+/* Copy button */
+.copy-btn {
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+
+.copy-btn:hover {
+  color: var(--text-primary);
+}
+
+/* Smooth transitions for interactive elements */
+button, a {
+  transition: all 0.2s ease;
+}
+
+/* Focus ring */
+button:focus-visible, a:focus-visible {
+  outline: 2px solid var(--accent-green);
+  outline-offset: 2px;
+}
+
+/* Link styling */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Status dot animation */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--accent-green);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
