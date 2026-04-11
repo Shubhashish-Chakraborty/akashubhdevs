@@ -9,7 +9,7 @@ export default function Nav() {
           href="#"
           className="font-mono font-bold text-base text-gruvbox-green hover:text-gruvbox-yellow transition-colors"
         >
-          ShubhDEVs
+          ShubhDEVs | Under Development
         </a>
 
         {/* Nav links */}

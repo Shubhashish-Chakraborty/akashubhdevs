@@ -32,7 +32,7 @@ export default function Hero() {
       <div className="max-w-5xl mx-auto px-6 w-full">
         <div className="flex flex-col lg:flex-row items-start gap-8 lg:gap-14">
           <div className="flex flex-col justify-center items-center">
-            
+
             {/* ── Left: Particle Face ── */}
             <div className="flex-shrink-0 self-start">
               <ParticleFace imageSrc="/me.png" size={320} />
@@ -41,7 +41,7 @@ export default function Hero() {
             {/* Status line */}
             <div className="flex items-center gap-3 mt-5">
               <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded text-xs text-white bg-black border border-white">
-                tl;dr
+                tl;dr | modal
               </span>
               <span className="flex items-center border border-white gap-2 px-3 py-1.5 rounded text-xs text-white">
                 <span className="status-dot" />
@@ -123,7 +123,7 @@ export default function Hero() {
 
               {/* Twitter/X */}
               <a
-                href="https://twitter.com/ShubhashishDev"
+                href="https://x.com/__Shubhashish__"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-icon"
@@ -136,7 +136,7 @@ export default function Hero() {
 
               {/* LinkedIn */}
               <a
-                href="https://linkedin.com/in/shubhashish-chakraborty"
+                href="https://linkedin.com/in/Shubhashish-Chakraborty"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-icon"
@@ -147,9 +147,22 @@ export default function Hero() {
                 </svg>
               </a>
 
+              {/* Youtube */}
+              <a
+                href="https://www.youtube.com/@shubhdevs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon"
+                aria-label="YouTube"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.376.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.376-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                </svg>
+              </a>
+
               {/* Email */}
               <a
-                href="mailto:shubhashish@dev.com"
+                href="mailto:shubhashish147@gmail.com"
                 className="social-icon"
                 aria-label="Email"
               >
@@ -157,6 +170,7 @@ export default function Hero() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </a>
+
             </div>
 
             {/* CTA buttons */}
