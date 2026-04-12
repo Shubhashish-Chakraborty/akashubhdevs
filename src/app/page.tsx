@@ -13,12 +13,9 @@ export default function Home() {
       <Nav />
       <Hero />
       <GitHubContributions />
-      {/* <ExperienceAndProjects /> */}
+      <ExperienceAndProjects />
       <ContentMarquee />
-      {/* <Footer /> */}
-      <div className="flex items-center justify-center">
-        under Development!!!
-      </div>
+      <Footer />
     </main>
   );
 }

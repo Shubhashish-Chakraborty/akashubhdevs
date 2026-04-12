@@ -9,9 +9,7 @@ export default function Footer() {
         </span>
 
         <span className="font-mono text-xs text-gruvbox-text-muted">
-          built with{" "}
-          <span className="text-gruvbox-text-secondary">next.js</span> +{" "}
-          <span className="text-gruvbox-text-secondary">typescript</span>
+          ❤️
         </span>
       </div>
     </footer>

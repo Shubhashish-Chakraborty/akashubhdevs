@@ -149,7 +149,7 @@ export default function ExperienceAndProjects() {
           {/* View all on GitHub */}
           <div className="mt-8 text-center">
             <a
-              href="https://github.com/yourusername"
+              href="https://github.com/Shubhashish-Chakraborty"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gruvbox-text-muted text-xs hover:text-gruvbox-text-secondary transition-colors inline-flex items-center gap-2"
