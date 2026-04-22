@@ -5,23 +5,22 @@ import ParticleFace from "./ParticleFace";
 // ─── Editable Tech Stack ─────────────────────────────────────────────────
 // Add or remove technologies here. Set `highlight: true` for accent color.
 const TECH_STACK: { name: string; highlight?: boolean }[] = [
+  { name: "next.js", highlight: true },
   { name: "react" },
-  { name: "next.js" },
-  { name: "typescript" },
+  { name: "typescript"},
   { name: "javascript" },
   { name: "node.js" },
   { name: "express" },
   { name: "python" },
-  { name: "fastAPI" },
-  { name: "tailwind" },
+  { name: "fastAPI", highlight: true },
+  { name: "C++", highlight: true },
+  { name: "GoLang" },
+  { name: "tailwindcss" },
   { name: "docker" },
-  { name: "git", highlight: true },
-  { name: "postgresql" },
+  { name: "git" },
+  { name: "postgresql", highlight: true },
   { name: "mongodb" },
-  { name: "redis", highlight: true },
   { name: "aws" },
-  { name: "linux" },
-  { name: "figma" },
 ];
 
 export default function Hero() {
@@ -74,24 +73,24 @@ export default function Hero() {
                 Shubhashish Chakraborty
               </span>
               <span className="block text-base lg:text-lg text-gruvbox-text-secondary font-light mt-1">
-                / developer
+                / Software Developer,Tech Educator
               </span>
             </h1>
 
             {/* Bio */}
-            <p className="text-gruvbox-text-secondary text-sm leading-relaxed max-w-lg mb-2">
-              i build web apps and tools. currently exploring
-              cloud architecture and contributing to open-source.
+            <p className="text-white text-sm leading-relaxed max-w-lg mb-2">
+              has a learn-by-doing mindset. currently exploring
+              AIML, practicing on codeforces & contributing to open-source.
             </p>
 
             {/* Current project */}
             <p className="text-gruvbox-text-secondary text-sm mb-5">
               <span className="text-gruvbox-text-muted">▸</span>{" "}
-              building{" "}
+              currently working with{" "}
               <span className="text-gruvbox-text-primary font-bold">
-                cool stuff
+                cloudflare workers
               </span>{" "}
-              - crafting digital experiences
+              in python
             </p>
 
             {/* Tech stack tags */}

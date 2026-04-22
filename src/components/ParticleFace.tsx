@@ -290,7 +290,7 @@ export default function ParticleFace({
     >
       <canvas
         ref={canvasRef}
-        className="cursor-crosshair"
+        className="cursor-pointer"
         style={{ width: size, height: size }}
       />
     </div>
