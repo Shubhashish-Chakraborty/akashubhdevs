@@ -13,7 +13,7 @@ export default function Home() {
       <Nav />
       <Hero />
       <GitHubContributions />
-      <ExperienceAndProjects />
+      {/* <ExperienceAndProjects /> */}
       <ContentMarquee />
       <Footer />
     </main>
