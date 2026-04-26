@@ -35,7 +35,7 @@ export default function Hero() {
 
             {/* ── Left: Particle Face ── */}
             <div className="flex-shrink-0 self-start">
-              <ParticleFace imageSrc="/me.png" size={320} />
+              <ParticleFace imageSrc="/me4.png" size={320} />
             </div>
 
             {/* Status line */}

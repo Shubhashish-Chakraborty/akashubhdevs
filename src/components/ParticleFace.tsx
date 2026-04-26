@@ -2,227 +2,199 @@
 
 import { useEffect, useRef, useCallback } from "react";
 
-// ─── Particle class ─────────────────────────────────────────────────────────
+// ─── Constants ───────────────────────────────────────────────────────────────
+const GAP = 2;           // px between sample points — smaller = more accurate
+const MOUSE_RADIUS = 45;
+const REPEL_MAG = 12;
+const DAMPING = 0.86;
+const EASE_MIN = 0.04;
+const EASE_RANGE = 0.03;
+
+// ─── Particle ────────────────────────────────────────────────────────────────
 class Particle {
   x: number;
   y: number;
   targetX: number;
   targetY: number;
-  vx: number = 0;
-  vy: number = 0;
+  vx = 0;
+  vy = 0;
+
   r: number;
   g: number;
   b: number;
-  size: number;
+  /** Normalised [0‥1] alpha from the source pixel */
+  alpha: number;
+
   ease: number;
-  assembled: boolean = false;
   delay: number;
 
   constructor(
-    startX: number,
-    startY: number,
-    targetX: number,
-    targetY: number,
+    sx: number,
+    sy: number,
+    tx: number,
+    ty: number,
     r: number,
     g: number,
     b: number,
+    alpha: number,
     delay: number
   ) {
-    this.x = startX;
-    this.y = startY;
-    this.targetX = targetX;
-    this.targetY = targetY;
+    this.x = sx;
+    this.y = sy;
+    this.targetX = tx;
+    this.targetY = ty;
     this.r = r;
     this.g = g;
     this.b = b;
-    this.size = Math.random() * 1.2 + 0.8;
-    this.ease = Math.random() * 0.04 + 0.035;
+    this.alpha = alpha;
+    this.ease = EASE_MIN + Math.random() * EASE_RANGE;
     this.delay = delay;
   }
 
-  update(
-    mx: number,
-    my: number,
-    hovered: boolean,
-    frame: number,
-    mouseRadius: number
-  ) {
+  update(mx: number, my: number, hovered: boolean, frame: number) {
     if (frame < this.delay) return;
 
-    let forceX = 0;
-    let forceY = 0;
+    let fx = 0;
+    let fy = 0;
 
     if (hovered) {
       const dx = this.x - mx;
       const dy = this.y - my;
-      const distSq = dx * dx + dy * dy;
-      const dist = Math.sqrt(distSq);
-
-      if (dist < mouseRadius) {
-        const force = Math.pow((mouseRadius - dist) / mouseRadius, 2);
-        const mag = force * 18;
-        forceX += (dx / (dist || 1)) * mag;
-        forceY += (dy / (dist || 1)) * mag;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < MOUSE_RADIUS && dist > 0) {
+        const strength = Math.pow((MOUSE_RADIUS - dist) / MOUSE_RADIUS, 2);
+        fx = (dx / dist) * strength * REPEL_MAG;
+        fy = (dy / dist) * strength * REPEL_MAG;
       }
     }
 
-    const springX = (this.targetX - this.x) * this.ease;
-    const springY = (this.targetY - this.y) * this.ease;
+    // Spring back to target
+    fx += (this.targetX - this.x) * this.ease;
+    fy += (this.targetY - this.y) * this.ease;
 
-    this.vx = (this.vx + forceX + springX) * 0.86;
-    this.vy = (this.vy + forceY + springY) * 0.86;
-
+    this.vx = (this.vx + fx) * DAMPING;
+    this.vy = (this.vy + fy) * DAMPING;
     this.x += this.vx;
     this.y += this.vy;
-
-    const distToTarget = Math.hypot(
-      this.x - this.targetX,
-      this.y - this.targetY
-    );
-    if (distToTarget < 1) this.assembled = true;
   }
 
   draw(ctx: CanvasRenderingContext2D, frame: number) {
     if (frame < this.delay) return;
-    const alpha = Math.min(1, (frame - this.delay) / 30);
-    ctx.fillStyle = `rgba(${this.r},${this.g},${this.b},${alpha * 0.92})`;
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fill();
+
+    // Fade in over 20 frames after delay
+    const fadeIn = Math.min(1, (frame - this.delay) / 20);
+    const a = fadeIn * this.alpha;
+
+    ctx.fillStyle = `rgba(${this.r},${this.g},${this.b},${a})`;
+    // Use exact gap-sized squares so pixels tile perfectly when assembled
+    ctx.fillRect(this.x - GAP / 2, this.y - GAP / 2, GAP, GAP);
   }
 }
 
-// ─── Component ──────────────────────────────────────────────────────────────
+// ─── Component ───────────────────────────────────────────────────────────────
 interface ParticleFaceProps {
   imageSrc?: string;
   size?: number;
 }
 
 export default function ParticleFace({
-  imageSrc = "/me.png",
+  imageSrc = "/me4.png",
   size = 320,
 }: ParticleFaceProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particlesRef = useRef<Particle[]>([]);
+  const particles = useRef<Particle[]>([]);
   const mouseRef = useRef({ x: -9999, y: -9999 });
   const hoveredRef = useRef(false);
   const animRef = useRef<number>(0);
   const frameRef = useRef(0);
-  const MOUSE_RADIUS = 70;
 
-  const buildParticles = useCallback(
-    (W: number, H: number, imgEl?: HTMLImageElement) => {
-      const particles: Particle[] = [];
-      const sampleSize = Math.min(W, H) - 10;
-      const offsetX = (W - sampleSize) / 2;
-      const offsetY = (H - sampleSize) / 2;
+  // ── Build particles from image ────────────────────────────────────────────
+  const buildParticles = useCallback((W: number, H: number, img?: HTMLImageElement) => {
+    const list: Particle[] = [];
 
-      if (imgEl) {
-        const off = document.createElement("canvas");
-        off.width = sampleSize;
-        off.height = sampleSize;
-        const offCtx = off.getContext("2d")!;
+    if (img) {
+      // Draw image into an offscreen canvas at full canvas resolution,
+      // clipped to a circle.
+      const off = document.createElement("canvas");
+      off.width = W;
+      off.height = H;
+      const octx = off.getContext("2d")!;
 
-        offCtx.beginPath();
-        offCtx.arc(
-          sampleSize / 2,
-          sampleSize / 2,
-          sampleSize / 2,
-          0,
-          Math.PI * 2
-        );
-        offCtx.clip();
-        offCtx.drawImage(imgEl, 0, 0, sampleSize, sampleSize);
+      // Circular clip
+      octx.beginPath();
+      octx.arc(W / 2, H / 2, Math.min(W, H) / 2, 0, Math.PI * 2);
+      octx.clip();
 
-        const data = offCtx.getImageData(0, 0, sampleSize, sampleSize).data;
-        const gap = 3;
-
-        for (let y = 0; y < sampleSize; y += gap) {
-          for (let x = 0; x < sampleSize; x += gap) {
-            const i = (y * sampleSize + x) * 4;
-            const a = data[i + 3];
-            if (a < 80) continue;
-
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-            const brightness = (r + g + b) / 3;
-            if (brightness < 10) continue;
-
-            const tx = x + offsetX;
-            const ty = y + offsetY;
-
-            const edge = Math.random();
-            let sx: number, sy: number;
-            if (edge < 0.25) {
-              sx = Math.random() * W;
-              sy = -20;
-            } else if (edge < 0.5) {
-              sx = W + 20;
-              sy = Math.random() * H;
-            } else if (edge < 0.75) {
-              sx = Math.random() * W;
-              sy = H + 20;
-            } else {
-              sx = -20;
-              sy = Math.random() * H;
-            }
-
-            const dist = Math.hypot(tx - W / 2, ty - H / 2);
-            const delay = Math.floor(
-              (dist / (sampleSize / 2)) * 50 + Math.random() * 25
-            );
-
-            particles.push(new Particle(sx, sy, tx, ty, r, g, b, delay));
-          }
-        }
+      // Draw image to fill the entire canvas (preserving aspect ratio via cover)
+      const imgAspect = img.naturalWidth / img.naturalHeight;
+      const canAspect = W / H;
+      let dw: number, dh: number, dx: number, dy: number;
+      if (imgAspect > canAspect) {
+        // Image is wider — fit height, center width
+        dh = H;
+        dw = H * imgAspect;
+        dx = (W - dw) / 2;
+        dy = 0;
       } else {
-        const cx = W / 2;
-        const cy = H / 2;
-        const R = sampleSize / 2;
+        // Image is taller — fit width, center height
+        dw = W;
+        dh = W / imgAspect;
+        dx = 0;
+        dy = (H - dh) / 2;
+      }
+      octx.drawImage(img, dx, dy, dw, dh);
 
-        for (let y = -R; y < R; y += 4) {
-          for (let x = -R; x < R; x += 4) {
-            const dist = Math.sqrt(x * x + y * y);
-            if (dist > R) continue;
+      const { data } = octx.getImageData(0, 0, W, H);
 
-            const t = dist / R;
-            const r = Math.round(169 + (212 - 169) * t);
-            const g = Math.round(182 + (190 - 182) * t);
-            const b = Math.round(101 + (98 - 101) * t);
+      for (let py = 0; py < H; py += GAP) {
+        for (let px = 0; px < W; px += GAP) {
+          const i = (py * W + px) * 4;
+          const a = data[i + 3];
+          if (a < 30) continue;         // fully transparent — skip
 
-            const tx = cx + x;
-            const ty = cy + y;
-            const delay = Math.floor(
-              (dist / R) * 50 + Math.random() * 20
-            );
+          const r = data[i];
+          const g = data[i + 1];
+          const b = data[i + 2];
 
-            const sx = Math.random() * W;
-            const sy = Math.random() * H;
+          // Spawn from a random edge
+          const edge = Math.random();
+          let sx: number, sy: number;
+          if (edge < 0.25) { sx = Math.random() * W; sy = -20; }
+          else if (edge < 0.50) { sx = W + 20; sy = Math.random() * H; }
+          else if (edge < 0.75) { sx = Math.random() * W; sy = H + 20; }
+          else { sx = -20; sy = Math.random() * H; }
 
-            particles.push(new Particle(sx, sy, tx, ty, r, g, b, delay));
-          }
+          // Particles closer to centre assemble earlier
+          const distFromCentre = Math.hypot(px - W / 2, py - H / 2);
+          const maxDist = Math.min(W, H) / 2;
+          const delay = Math.floor((distFromCentre / maxDist) * 40 + Math.random() * 20);
+
+          list.push(new Particle(sx, sy, px, py, r, g, b, a / 255, delay));
         }
       }
+    }
 
-      particlesRef.current = particles;
-    },
-    []
-  );
+    particles.current = list;
+  }, []);
 
+  // ── Main effect ──────────────────────────────────────────────────────────
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const ctx = canvas.getContext("2d")!;
     canvas.width = size;
     canvas.height = size;
+    frameRef.current = 0;
 
+    // Load image
     const img = new Image();
     img.crossOrigin = "anonymous";
     img.src = imageSrc;
     img.onload = () => buildParticles(size, size, img);
     img.onerror = () => buildParticles(size, size, undefined);
 
+    // Animation loop
     const tick = () => {
       frameRef.current++;
       const f = frameRef.current;
@@ -232,8 +204,8 @@ export default function ParticleFace({
 
       ctx.clearRect(0, 0, size, size);
 
-      for (const p of particlesRef.current) {
-        p.update(mx, my, hov, f, MOUSE_RADIUS);
+      for (const p of particles.current) {
+        p.update(mx, my, hov, f);
         p.draw(ctx, f);
       }
 
@@ -241,6 +213,7 @@ export default function ParticleFace({
     };
     animRef.current = requestAnimationFrame(tick);
 
+    // Mouse events
     const onMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       const scaleX = size / rect.width;
@@ -250,44 +223,26 @@ export default function ParticleFace({
         y: (e.clientY - rect.top) * scaleY,
       };
     };
-    const onEnter = () => {
-      hoveredRef.current = true;
-    };
+    const onEnter = () => { hoveredRef.current = true; };
     const onLeave = () => {
       hoveredRef.current = false;
       mouseRef.current = { x: -9999, y: -9999 };
     };
 
-    // const onClick = () => {
-    //   for (const p of particlesRef.current) {
-    //     p.x = Math.random() * size;
-    //     p.y = Math.random() * size;
-    //     p.vx = (Math.random() - 0.5) * 15;
-    //     p.vy = (Math.random() - 0.5) * 15;
-    //     p.assembled = false;
-    //     p.delay = Math.floor(Math.random() * 20);
-    //   }
-    // };
-
     canvas.addEventListener("mousemove", onMove);
     canvas.addEventListener("mouseenter", onEnter);
     canvas.addEventListener("mouseleave", onLeave);
-    // canvas.addEventListener("click", onClick);
 
     return () => {
       cancelAnimationFrame(animRef.current);
       canvas.removeEventListener("mousemove", onMove);
       canvas.removeEventListener("mouseenter", onEnter);
       canvas.removeEventListener("mouseleave", onLeave);
-      // canvas.removeEventListener("click", onClick);
     };
   }, [imageSrc, size, buildParticles]);
 
   return (
-    <div
-      className="relative select-none"
-      style={{ width: size, height: size }}
-    >
+    <div className="relative select-none" style={{ width: size, height: size }}>
       <canvas
         ref={canvasRef}
         className="cursor-pointer"
