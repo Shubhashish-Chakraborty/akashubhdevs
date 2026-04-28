@@ -5,6 +5,7 @@ import ExperienceAndProjects from "@/components/Projects";
 import ContentMarquee from "@/components/ContentMarquee";
 import CodeRainBackground from "@/components/CodeRainBackground";
 import Footer from "@/components/Footer";
+import LatestContent from "@/components/LatestContent";
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
       <Hero />
       <GitHubContributions />
       {/* <ExperienceAndProjects /> */}
+      <LatestContent/>
       <ContentMarquee />
       <Footer />
     </main>
